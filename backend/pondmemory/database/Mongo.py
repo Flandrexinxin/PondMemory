@@ -1,8 +1,12 @@
 import pymongo
 import config
+from pondmemory.utils.Logger import logger
+
 MONGO_HOST = config.MONGO_HOST
 MONGO_PORT = config.MONGO_PORT
 MONGO_DB = config.MONGO_DB
+
+
 class Mongo:
     def __init__(self, 
                  host=MONGO_HOST, 
@@ -12,9 +16,17 @@ class Mongo:
         self.host = host
         self.port = port 
         self.database = database
+        self.client = None
     
     def get_client(self) -> pymongo.MongoClient:
-        return pymongo.MongoClient(f'mongodb://{self.host}:{self.port}/')
+        try:
+            if self.client is None:
+                self.client = pymongo.MongoClient(f'mongodb://{self.host}:{self.port}/')
+                logger.logger.info(f"与MongoDB {self.host}:{self.port} 建立连接")
+        except Exception as e:
+            logger.logger.error(f"与MongoDB {self.host}:{self.port} 建立连接失败")
+            logger.logger.error(e)
+        return self.client
 
     def get_db(self):
         return self.get_client().get_database(self.database)
