@@ -10,7 +10,7 @@ class Logger(object):
     }
 
     def __init__(self, filename, level='info', when='D', backCount=30,
-                 fmt='%(asctime)s - %(levelname)s: %(message)s'):
+                 fmt='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'):
         # '%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
         self.logger = logging.getLogger(filename)
         format_str = logging.Formatter(fmt)
