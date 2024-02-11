@@ -38,7 +38,7 @@ def authorizeUserIdPassword(userId: ObjectId, password: str):
 def register_user_sql(userName: str, password: str, email: str):
     # execute_sql_write(pooldb, 'insert into users(username,password,email) values(%s,%s,%s)',
     #                   (userName, generate_password_hash(password), email))
-    return Mongo().insert_one("User", {"userName": userName, "password": generate_password_hash(password), "email": email, "crateTime": datetime.datetime.now(), "avatar": [], 'roles': 'common', 'signature': '这个人无话可说~'})
+    return Mongo().insert_one("User", {"userName": userName, "password": generate_password_hash(password), "email": email, "crateTime": datetime.datetime.now(), "avatar": ['https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'], 'roles': 'common', 'signature': '这个人无话可说~'})
 
 
 # 检查email是不是唯一的，如果是则返回True，否则返回False
