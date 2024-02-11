@@ -14,7 +14,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/personal',
     name: 'personal',
     component: () => import('@/views/Personal.vue')
-  }
+  },
+  {
+    path:'/WechatRecord',
+    name:'WechatRecord',
+    component:()=> import('@/views/WechatRecord.vue')
+  },
 ]
 
 const router: Router = createRouter({
