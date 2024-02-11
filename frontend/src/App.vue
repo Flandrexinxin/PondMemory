@@ -4,7 +4,7 @@
     <!--  头部导航栏  -->
     <el-row style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 100%; flex-direction: row; flex-wrap: nowrap; margin: 0px 20px 0px 20px">
       <el-row style="display: flex; width: fit-content; height: 100%; align-items: center">
-        <h1 style="height: fit-content; width: fit-content; color: #66b4e0; font-family: rainbow-party">PondMemory</h1>
+        <h1 @click="onClickLogo" style="height: fit-content; width: fit-content; color: #66b4e0; font-family: rainbow-party">PondMemory</h1>
       </el-row>
       <el-row style="display: flex; width: fit-content; height: 100%; align-items: center">
         <el-row v-if="UserInfo != null && UserInfo != undefined && UserInfo.avatar != null && UserInfo.avatar != undefined && UserInfo.avatar.length > 0" style="justify-content: center; align-items: center">
@@ -531,6 +531,15 @@ const onClickGoToSettingBtn = () => {
     path: "/setting",
   })
 }
+
+const onClickLogo = () =>{
+  router.push({
+    path:'/'
+  }).then(() => {
+    location.reload()
+  })
+}
+
 </script>
 
 <style scoped lang="scss">

@@ -84,7 +84,8 @@ const option = reactive({
 const onClickElLink = () => {
   // shell.openExternal("https://gitee.com/killuayz/pond-memory");
   // openDefaultBrowser("https://gitee.com/killuayz/pond-memory");
-  window.electron.ipcRenderer.send('openProjectWindow');
+  // window.electron.ipcRenderer.send('openProjectWindow');
+  window.open('https://gitee.com/killuayz/pond-memory');
 }
 
 
