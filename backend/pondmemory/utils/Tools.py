@@ -7,6 +7,8 @@ from pondmemory.utils.myExceptions import NetworkException
 from pondmemory.database.Mongo import Mongo
 import datetime
 from bson.objectid import ObjectId
+mongo = Mongo()
+
 def timestamp2str(timestamp: int):
     timeArray = time.localtime(timestamp)
     otherStyleTime = time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
@@ -15,25 +17,25 @@ def timestamp2str(timestamp: int):
 
 def check_if_token_exist(token: str) -> bool:
     # rows = execute_sql_query(pooldb, 'select * from user_token where token=%s ', token)
-    rows = list(Mongo().find("UserToken", {"token": token}))
+    rows = list(mongo.find("UserToken", {"token": token}))
     if rows is None or len(rows) <= 0:
         return False
     return True
 
 def get_user_by_token(token) -> Dict[str, Union[int, str]]:
     # return execute_sql_query_one(pooldb, 'select * from users, user_token where token=%s and user_token.uid=users.id', token)
-    user_token = Mongo().find_one("UserToken", {"token": token})
+    user_token = mongo.find_one("UserToken", {"token": token})
     if user_token is None:
         return None
     userId = user_token["userId"]
     # print(f'userId = {userId}')
-    user = Mongo().find_one("User", {"_id": userId})
+    user = mongo.find_one("User", {"_id": userId})
     # print(f"user = {user}")
     return user
 
 def update_token_visit_time(token):
     # execute_sql_write(pooldb, 'update user_token set visitTime=CURRENT_TIMESTAMP where token=%s', (token))
-    Mongo().update_one("UserToken", {"token": token}, {"$set": {"visitTime": datetime.datetime.now()}})
+    mongo.update_one("UserToken", {"token": token}, {"$set": {"visitTime": datetime.datetime.now()}})
 
 def check_tokens_get_state(token, roles):
     if token is None:
@@ -114,7 +116,7 @@ def buildSessionKey():
         cnt += 1
         sessionKey = hashlib.sha1(os.urandom(24)).hexdigest()
         # rows = execute_sql_query(pooldb, 'select * from check_code_session_key where sessionKey=%s', sessionKey)
-        rows = list(Mongo().find("CheckCodeSessionKey", {"sessionKey": sessionKey}))
+        rows = list(mongo.find("CheckCodeSessionKey", {"sessionKey": sessionKey}))
         if rows is None or (rows is not None and len(rows)) == 0:
             break
         if cnt >= 50:
@@ -125,7 +127,7 @@ def build_token():
     while True:
         token = hashlib.sha1(os.urandom(24)).hexdigest()
         # rows = pooldb.read('select * from user_token where token="%s"' % token)
-        rows = list(Mongo().find("UserToken", {"token": token}))
+        rows = list(mongo.find("UserToken", {"token": token}))
         if not rows or (rows and len(rows) == 0):
             # 找到一个不重复的token
             break
@@ -135,7 +137,7 @@ def build_token_and_insert_token_into_db(userId: ObjectId):
     try:
         token = build_token()
         # execute_sql_write(pooldb, 'insert into user_token(uid, token) values(%s, %s)', (uid, token))
-        Mongo().insert_one("UserToken", {"userId": userId, "token": token})
+        mongo.insert_one("UserToken", {"userId": userId, "token": token})
         return token
     except Exception as e:
         print(e)

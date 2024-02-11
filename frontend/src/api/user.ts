@@ -100,3 +100,16 @@ export function userProfile(){
   })
 }
 
+export function changeUserProfile(data){
+  const payload = {
+    "userName": data.userName,
+    "signature": data.signature,
+    "sex": data.sex ? 'male' : 'female'
+  }
+  return request({
+    url: 'user/profile/change',
+    method: 'post',
+    data: payload
+  })
+}
+
