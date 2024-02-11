@@ -20,7 +20,7 @@ app = create_app()
 # print(res)
 # print(res["username"])
 #
-from pondmemory.utils.file import uploadFileToDB, getFileFromDB
+# from pondmemory.utils.file import uploadFileToDB, getFileFromDB
 # with open("C:\\Users\\killuayz\\Desktop\\微信图片_20240211233055.png", 'rb') as f:
 #     uploadFileToDB(f.read(), "pic1", 'png')
 

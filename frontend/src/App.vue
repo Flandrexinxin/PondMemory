@@ -3,7 +3,7 @@
   <el-row style="width: 100%; height: 60px; box-shadow: 0px 2px 12px #9b9b9b; align-items: center;">
     <!--  头部导航栏  -->
     <el-row style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 100%; flex-direction: row; flex-wrap: nowrap; margin: 0px 20px 0px 20px">
-      <el-row style="display: flex; width: fit-content; height: 100%; align-items: center">
+      <el-row style="display: flex; width: fit-content; height: 100%; align-items: center" @click="onClickLogo">
         <h1 style="height: fit-content; width: fit-content; color: #66b4e0; font-family:'Super Funtime';letter-spacing: 3px;font-size: 40px ">PondMemory</h1>
       </el-row>
       <el-row style="display: flex; width: fit-content; height: 100%; align-items: center">
@@ -39,156 +39,156 @@
     <el-row style="width: 100%; height: fit-content">
       <el-row style="width: 100%; height: fit-content; display: flex; justify-content: center;align-items: center; flex-direction: column">
         <span style="font-weight: bold; font-size: xx-large; color: #081642">Pond Memory</span>
-<!--        <span style="font-size: medium; color: #606060">每一种情绪都是真的</span>-->
+        <!--        <span style="font-size: medium; color: #606060">每一种情绪都是真的</span>-->
       </el-row>
       <el-row style="width: 100%; height: fit-content; justify-content: center; align-items: center">
         <transition name='list'>
-        <transition-group name="list">
-          <template v-if='cur_stage === "login"' key='login-form'>
-            <p class="title">欢迎登陆<span class="s-desc">Pond Memory</span></p>
-            <el-form
-                label-position='top'
-                :model='form'
-                :rules='loginRules'
-            >
-              <el-form-item prop='email' >
-                <el-input
-                    v-model='form.email'
-                    placeholder='邮箱'
-                    class='login-input'
-                    size='large'
+          <transition-group name="list">
+            <template v-if='cur_stage === "login"' key='login-form'>
+              <p class="title">欢迎登陆<span class="s-desc">Pond Memory</span></p>
+              <el-form
+                  label-position='top'
+                  :model='form'
+                  :rules='loginRules'
+              >
+                <el-form-item prop='email' >
+                  <el-input
+                      v-model='form.email'
+                      placeholder='邮箱'
+                      class='login-input'
+                      size='large'
 
-                />
-              </el-form-item>
-              <el-form-item prop='password'>
-                <el-input
-                    v-model='form.password'
-                    type='password'
-                    show-password
-                    placeholder='密码'
-                    class='login-input'
-                    size='large'
-                />
-              </el-form-item>
-              <el-row style='margin-top: 30px'>
-                <el-button type='primary' @click="onClickLoginBtn" class="login-button">确认</el-button>
-              </el-row>
-              <el-row style="display: flex;">
-                <el-button class='bottom-click-text-btn' text @click="changeStage('changePwd')">忘记密码？</el-button>
-                <el-button class='bottom-click-text-btn' text @click="changeStage('register')">还没有账户？点击注册</el-button>
-              </el-row>
-            </el-form>
-          </template>
-          <template v-else-if='cur_stage === "register"' key='register-form'>
-            <p class="title">欢迎注册<span class="s-desc">Pond Memory</span></p>
-            <el-form
-                label-position='top'
-                :model='form'
-                :rules='registerRules'
-            >
-              <el-form-item prop='userName'>
-                <el-input
-                    v-model='form.userName'
-                    placeholder='用户名'
-                    size='large'
-                />
-              </el-form-item>
-              <el-form-item prop='email'>
-                <el-input
-                    v-model='form.email'
-                    placeholder='邮箱'
-                    @change='onRegisterEmailChange'
-                    size='large'
-                />
-              </el-form-item>
-              <el-form-item  prop='password'>
-                <el-input
-                    v-model='form.password'
-                    type='password'
-                    show-password
-                    placeholder='密码'
-                    size='large'
-                />
-              </el-form-item>
-              <el-form-item  prop='confirmPassword'>
-                <el-input
-                    v-model='form.comfirmPassword'
-                    type='password'
-                    show-password
-                    placeholder='确认密码'
-                    size='large'
-                />
-              </el-form-item>
-              <el-form-item prop='checkCode'>
-                <div style='display: flex; flex-direction: row; width: 100%' >
+                  />
+                </el-form-item>
+                <el-form-item prop='password'>
                   <el-input
-                      v-model='form.checkCode'
-                      placeholder='验证码'
+                      v-model='form.password'
+                      type='password'
+                      show-password
+                      placeholder='密码'
+                      class='login-input'
                       size='large'
                   />
-                  <el-button type='success' size='large' @click='onClickGetRegisterCheckCodeBtn' :disabled='registerPageGetCheckCodeDisabled' >获取验证码  {{check_code_count_down}}</el-button>
-                </div>
-              </el-form-item>
-              <el-row style='margin-top: 30px'>
-                <el-button type='primary' @click="onClickRegisterBtn" :disabled='registerBtnIsDisabled' class="login-button">确认</el-button>
-              </el-row>
-              <el-row style="display: flex; flex-direction: row-reverse">
-                <el-button class='bottom-click-text-btn' text @click="changeStage('login')">已注册账户？点击登录</el-button>
-              </el-row>
-            </el-form>
-          </template>
-          <template v-else-if='cur_stage === "changePwd"' key='change-pwd-form'>
-            <p class="title">修改密码<span class="s-desc">Pond Memory</span></p>
-            <el-form
-                label-position='top'
-                :model='form'
-                :rules='registerRules'
-            >
-              <el-form-item  prop='email'>
-                <el-input
-                    v-model='form.email'
-                    placeholder='邮箱'
-                    @change='onRegisterEmailChange'
-                    size='large'
-                />
-              </el-form-item>
-              <el-form-item  prop='password'>
-                <el-input
-                    v-model='form.password'
-                    type='password'
-                    show-password
-                    placeholder='密码'
-                    size='large'
-                />
-              </el-form-item>
-              <el-form-item  prop='confirmPassword'>
-                <el-input
-                    v-model='form.comfirmPassword'
-                    type='password'
-                    show-password
-                    placeholder='确认密码'
-                    size='large'
-                />
-              </el-form-item>
-              <el-form-item  prop='checkCode'>
-                <div style='display: flex; flex-direction: row; width: 100%' >
+                </el-form-item>
+                <el-row style='margin-top: 30px'>
+                  <el-button type='primary' @click="onClickLoginBtn" class="login-button">确认</el-button>
+                </el-row>
+                <el-row style="display: flex;">
+                  <el-button class='bottom-click-text-btn' text @click="changeStage('changePwd')">忘记密码？</el-button>
+                  <el-button class='bottom-click-text-btn' text @click="changeStage('register')">还没有账户？点击注册</el-button>
+                </el-row>
+              </el-form>
+            </template>
+            <template v-else-if='cur_stage === "register"' key='register-form'>
+              <p class="title">欢迎注册<span class="s-desc">Pond Memory</span></p>
+              <el-form
+                  label-position='top'
+                  :model='form'
+                  :rules='registerRules'
+              >
+                <el-form-item prop='userName'>
                   <el-input
-                      v-model='form.checkCode'
-                      placeholder='验证码'
+                      v-model='form.userName'
+                      placeholder='用户名'
                       size='large'
                   />
-                  <el-button type='success' size='large' @click='onClickGetChangePwdCheckCodeBtn' :disabled='changePwdPageGetCheckCodeDisabled' >获取验证码  {{check_code_count_down}}</el-button>
-                </div>
-              </el-form-item>
-              <el-row style='margin-top: 30px'>
-                <el-button type='primary' @click="onClickUpdatePwdBtn" class="login-button">确认</el-button>
-              </el-row>
-              <el-row style="display: flex;">
-                <el-button class='bottom-click-text-btn' text @click="changeStage('login')">已有账户？点击登录</el-button>
-              </el-row>
-            </el-form>
-          </template>
-        </transition-group>
+                </el-form-item>
+                <el-form-item prop='email'>
+                  <el-input
+                      v-model='form.email'
+                      placeholder='邮箱'
+                      @change='onRegisterEmailChange'
+                      size='large'
+                  />
+                </el-form-item>
+                <el-form-item  prop='password'>
+                  <el-input
+                      v-model='form.password'
+                      type='password'
+                      show-password
+                      placeholder='密码'
+                      size='large'
+                  />
+                </el-form-item>
+                <el-form-item  prop='confirmPassword'>
+                  <el-input
+                      v-model='form.comfirmPassword'
+                      type='password'
+                      show-password
+                      placeholder='确认密码'
+                      size='large'
+                  />
+                </el-form-item>
+                <el-form-item prop='checkCode'>
+                  <div style='display: flex; flex-direction: row; width: 100%' >
+                    <el-input
+                        v-model='form.checkCode'
+                        placeholder='验证码'
+                        size='large'
+                    />
+                    <el-button type='success' size='large' @click='onClickGetRegisterCheckCodeBtn' :disabled='registerPageGetCheckCodeDisabled' >获取验证码  {{check_code_count_down}}</el-button>
+                  </div>
+                </el-form-item>
+                <el-row style='margin-top: 30px'>
+                  <el-button type='primary' @click="onClickRegisterBtn" :disabled='registerBtnIsDisabled' class="login-button">确认</el-button>
+                </el-row>
+                <el-row style="display: flex; flex-direction: row-reverse">
+                  <el-button class='bottom-click-text-btn' text @click="changeStage('login')">已注册账户？点击登录</el-button>
+                </el-row>
+              </el-form>
+            </template>
+            <template v-else-if='cur_stage === "changePwd"' key='change-pwd-form'>
+              <p class="title">修改密码<span class="s-desc">Pond Memory</span></p>
+              <el-form
+                  label-position='top'
+                  :model='form'
+                  :rules='registerRules'
+              >
+                <el-form-item  prop='email'>
+                  <el-input
+                      v-model='form.email'
+                      placeholder='邮箱'
+                      @change='onRegisterEmailChange'
+                      size='large'
+                  />
+                </el-form-item>
+                <el-form-item  prop='password'>
+                  <el-input
+                      v-model='form.password'
+                      type='password'
+                      show-password
+                      placeholder='密码'
+                      size='large'
+                  />
+                </el-form-item>
+                <el-form-item  prop='confirmPassword'>
+                  <el-input
+                      v-model='form.comfirmPassword'
+                      type='password'
+                      show-password
+                      placeholder='确认密码'
+                      size='large'
+                  />
+                </el-form-item>
+                <el-form-item  prop='checkCode'>
+                  <div style='display: flex; flex-direction: row; width: 100%' >
+                    <el-input
+                        v-model='form.checkCode'
+                        placeholder='验证码'
+                        size='large'
+                    />
+                    <el-button type='success' size='large' @click='onClickGetChangePwdCheckCodeBtn' :disabled='changePwdPageGetCheckCodeDisabled' >获取验证码  {{check_code_count_down}}</el-button>
+                  </div>
+                </el-form-item>
+                <el-row style='margin-top: 30px'>
+                  <el-button type='primary' @click="onClickUpdatePwdBtn" class="login-button">确认</el-button>
+                </el-row>
+                <el-row style="display: flex;">
+                  <el-button class='bottom-click-text-btn' text @click="changeStage('login')">已有账户？点击登录</el-button>
+                </el-row>
+              </el-form>
+            </template>
+          </transition-group>
         </transition>
       </el-row>
     </el-row>
@@ -199,7 +199,7 @@
 import {onMounted, reactive, ref} from 'vue'
 import { ElMessage } from 'element-plus'
 import { login, register, updatePwd, getRegisterSessionKeyCheckCode, getChangePwdSessionKeyCheckCode, checkIfEmailIsRegisted, userProfile } from '@/api/user'
-import {getUserInfo, removeToken, removeUserInfo, setToken, setUserInfo} from "@/utils/auth.ts";
+import {getUserInfo, removeToken, removeUserInfo, setToken, setUserInfo} from "@/utils/auth.js";
 import { ArrowDown, User, Setting, SwitchButton } from '@element-plus/icons-vue'
 import {useRouter} from "vue-router";
 
@@ -528,6 +528,14 @@ const onClickGoToPersonalBtn = () => {
 const onClickGoToSettingBtn = () => {
   router.push({
     path: "/setting",
+  })
+}
+
+const onClickLogo = () => {
+  router.push({
+    path: "/"
+  }).then(() => {
+    location.reload()
   })
 }
 </script>
