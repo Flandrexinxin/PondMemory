@@ -38,7 +38,7 @@ def authorizeUserIdPassword(userId: ObjectId, password: str):
 def register_user_sql(userName: str, password: str, email: str):
     # execute_sql_write(pooldb, 'insert into users(username,password,email) values(%s,%s,%s)',
     #                   (userName, generate_password_hash(password), email))
-    return Mongo().insert_one("User", {"userName": userName, "password": generate_password_hash(password), "email": email, "crateTime": datetime.datetime.now(), "avatar": [], 'roles': 'common'})
+    return Mongo().insert_one("User", {"userName": userName, "password": generate_password_hash(password), "email": email, "crateTime": datetime.datetime.now(), "avatar": [], 'roles': 'common', 'signature': '这个人无话可说~'})
 
 
 # 检查email是不是唯一的，如果是则返回True，否则返回False
@@ -268,7 +268,8 @@ def profile_get():
                 "userId": str(user['_id']),
                 "userName": user['userName'],
                 "email": user['email'],
-                "avatar": user['avatar']
+                "avatar": user['avatar'],
+                "signature": user['signature']
             }
         }
         return build_success_response(response)
@@ -327,137 +328,6 @@ def updatePwd():
         logger.logger.error(e)
         return build_error_response(500, "服务器内部错误")
 
-
-# def __user_avatar_add_sql(userId, fileId, session=None):
-#     sql = 'insert into user_avatar_history(userId, fileId) values(%s, %s) '
-#     if trans is None:
-#         execute_sql_write(sql, (userId, fileId))
-#     else:
-#         trans.execute(sql, (userId, fileId))
-#     return Mongo().insert_one("userAvatarHistory")
-#
-# def __user_avatar_query_sql(queryParam: dict) -> List[Dict]:
-#     sql = 'select * from user_avatar_history '
-#     value_list = []
-#     sql_list = []
-#     if 'fileId' in queryParam or 'userId' in queryParam:
-#         sql += ' where 1=1 '
-#         if 'fileId' in queryParam:
-#             value_list.append(queryParam['fileId'])
-#             sql_list.append(' and fileId = %s ')
-#         if 'userId' in queryParam:
-#             value_list.append(queryParam['userId'])
-#             sql_list.append(' and userId = %s ')
-#
-#     for sql_str in sql_list:
-#         sql += sql_str
-#     sql += ' order by updateTime desc '
-#     rows = execute_sql_query(pooldb, sql, tuple(value_list))
-#     return rows
-#
-#
-# def __check_if_history_is_exist(userId, fileId) -> bool:
-#     queryParam = {}
-#     queryParam['fileId'] = fileId
-#     queryParam['userId'] = userId
-#     rows = __user_avatar_query_sql(queryParam)
-#     if rows is not None and len(rows) > 0:
-#         return True
-#     return False
-#
-#
-# def __update_user_avatar_updateTime(userId, fileId, trans=None):
-#     sql = 'update user_avatar_history set updateTime=now() where userId=%s and fileId=%s'
-#     if trans is None:
-#         execute_sql_write(pooldb, sql, (userId, fileId))
-#     else:
-#         trans.execute(sql, (userId, fileId))
-#
-#
-# def __update_user_avatar(userId, fileId, trans=None):
-#     sql = 'update users set avator=%s where id = %s'
-#     if trans is None:
-#         execute_sql_write(pooldb, sql, (fileId, userId))
-#     else:
-#         trans.execute(sql, (fileId, userId))
-#
-#
-# # 用户历史头像
-# @bp.route('/avatar/add', methods=['POST'])
-# def add_user_avatar():
-#     try:
-#         data = request.json
-#         if 'fileName' not in data or 'fileType' not in data or 'fileContent' not in data:
-#             return build_error_response(400, '上传错误，fileName,fileType,fileContent信息不全')
-#
-#         user = check_user_before_request(request)
-#         trans = SqlTransaction(pooldb)
-#         trans.begin()
-#         fileId = __upload_file_binary_sql(data, trans)
-#         userId = user['id']
-#         if __check_if_history_is_exist(userId, fileId):
-#             # 如果存在了，就只更新一下时间
-#             __update_user_avatar_updateTime(userId, fileId, trans)
-#         else:
-#             # 否则就加进去
-#             __user_avatar_add_sql(userId, fileId, trans)
-#
-#         __update_user_avatar(userId, fileId, trans)
-#         trans.commit()
-#         return build_success_response()
-#
-#     except NetworkException as e:
-#         return build_error_response(code=e.code, msg=e.msg)
-#     except Exception as e:
-#         logger.logger.error(e)
-#         return build_error_response(500, "服务器内部错误")
-#
-#
-# @bp.route('/avatar/get', methods=['GET'])
-# def get_user_avatar():
-#     try:
-#         user = check_user_before_request(request)
-#         queryParam = {}
-#         queryParam['userId'] = user['id']
-#         rows = __user_avatar_query_sql(queryParam)
-#
-#         return build_success_response(data=rows, length=len(rows))
-#
-#     except NetworkException as e:
-#         return build_error_response(code=e.code, msg=e.msg)
-#     except Exception as e:
-#         logger.logger.error(e)
-#         return build_error_response(500, "服务器内部错误")
-#
-#
-# @bp.route('/avatar/update', methods=['POST'])
-# def update_user_avatar():
-#     try:
-#         data = request.json
-#         if 'fileId' not in data:
-#             return build_error_response(400, '上传错误，fileId缺失')
-#
-#         fileId = data['fileId']
-#         user = check_user_before_request(request)
-#         trans = SqlTransaction(pooldb)
-#         trans.begin()
-#         userId = user['id']
-#         if __check_if_history_is_exist(userId, fileId):
-#             # 如果存在了，就只更新一下时间
-#             __update_user_avatar_updateTime(userId, fileId, trans)
-#         else:
-#             # 否则就加进去
-#             __user_avatar_add_sql(userId, fileId, trans)
-#
-#         __update_user_avatar(userId, fileId, trans)
-#         trans.commit()
-#         return build_success_response()
-#
-#     except NetworkException as e:
-#         return build_error_response(code=e.code, msg=e.msg)
-#     except Exception as e:
-#         logger.logger.error(e)
-#         return build_error_response(500, "服务器内部错误")
 
 # 每过一段时间，都会检查一遍user_token表，看createTime和visitTime之差，如果二者之差>=30min，说明该用户已经长时间未进行操作了，应该该会话关闭
 def checkSessionsAvailability():
