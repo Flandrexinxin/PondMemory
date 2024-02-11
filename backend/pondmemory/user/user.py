@@ -269,7 +269,8 @@ def profile_get():
                 "userName": user['userName'],
                 "email": user['email'],
                 "avatar": user['avatar'],
-                "signature": user['signature']
+                "signature": user['signature'],
+                "sex": user['sex']
             }
         }
         return build_success_response(response)

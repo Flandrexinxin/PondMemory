@@ -1,4 +1,4 @@
-MONGO_HOST='localhost'
+MONGO_HOST='killuayz.top'
 MONGO_PORT=27017
 MONGO_DB='PondMemoryDB'
 MAIL_HOST='smtp.qq.com'
