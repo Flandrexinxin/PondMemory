@@ -8,3 +8,4 @@ MAIL_USER='2959243019@qq.com'
 MAIL_PASSWORD='clriocahxwmsdcfg'
 MAIL_SENDER='2959243019@qq.com'
 MAIL_TITLE='PondMemory令牌'
+1
