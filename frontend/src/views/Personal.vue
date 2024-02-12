@@ -1,7 +1,7 @@
 <template>
   <el-row style="flex-direction: column; justify-content: start; align-items: center;width: 100%; height: 100%; margin-top: 140px;">
     <el-row style="flex-direction: column; justify-content: center; align-items: center;width: 90%; height: fit-content; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); border-radius: 10px; padding: 0 20px 50px 20px ">
-      <el-avatar @click="onClickAvatar" :size="120" style="margin-top: -60px; box-shadow: 0 0px 5px 2px rgba(0, 0, 0, 0.19); margin-bottom: 30px; border-radius: 50%;" :src="UserInfo.avatar"/>
+      <el-avatar @click="onClickAvatar" :size="120" style="margin-top: -60px; box-shadow: 0 0px 5px 2px rgba(0, 0, 0, 0.19); margin-bottom: 30px; border-radius: 50%;" :src="bigAvatarSrc[0]"/>
       <el-row justify="center" align="middle">
         <span style="font-size: 35px; color: #313131; margin-bottom: 14px">{{UserInfo.userName}}</span>
 <!--        <el-button size="small" round @click="" style="padding: 0 5px 0 5px"><el-icon><Edit /></el-icon></el-button>-->
@@ -317,6 +317,14 @@ const onClickAvatarUpdate = (fileId) => {
     })
   })
 }
+
+const bigAvatarSrc = ref(Array(5))
+
+const init_avatar = () => {
+  getImageBase64WithCache(bigAvatarSrc, 0, UserInfo.value.avatar);
+}
+
+onMounted(init_avatar)
 </script>
 
 <style scoped>

@@ -336,3 +336,56 @@ def updatePwd():
 def checkSessionsAvailability():
     # execute_sql_write(pooldb, 'delete from user_token where timestampdiff(minute,visitTime,CURRENT_TIMESTAMP) >= 1440')
     mongo.delete_many("UserToken", {"visitTime": {"$lte": datetime.datetime.now() - datetime.timedelta(hours=1)}})
+
+
+from pondmemory.utils.file import *
+
+@bp.route('/avatar/list', methods=['POST'])
+def avatar_list_api():
+    try:
+        user = check_user_before_request(request)
+        userHistoryFileList = getFileMetaInfoList({
+            "userId": user['_id'],
+            "fileType": 'avatar'
+        })
+
+        processed_userHistoryFileList = []
+        for userHistoryFile in userHistoryFileList:
+            processed_userHistoryFileList.append(userHistoryFile['fileId'])
+
+        processed_systemAvatarList = []
+        systemAvatarList = getFileMetaInfoList({"fileType": 'system-avatar'})
+        for systemAvatar in systemAvatarList:
+            processed_systemAvatarList.append(systemAvatar['fileId'])
+
+        return build_success_response({
+            "userHistoryFileList": processed_userHistoryFileList,
+            "systemAvatarList": processed_systemAvatarList
+        })
+
+    except NetworkException as e:
+        return build_error_response(code=e.code, msg=e.msg)
+    except Exception as e:
+        logger.logger.error(e)
+        return build_error_response(500, "服务器内部错误")
+
+
+@bp.route('/avatar/update', methods=['POST'])
+def avatar_update_api():
+    try:
+        fileId = request.json.get('fileId')
+        checkFrontendArgsIsNotNone(
+            [
+                {"key": "fileId", "val": fileId},
+            ]
+        )
+        user = check_user_before_request(request)
+        mongo.update_one("User", {"_id": user["_id"]}, {"$set":{"avatar": fileId}})
+
+        return build_success_response()
+
+    except NetworkException as e:
+        return build_error_response(code=e.code, msg=e.msg)
+    except Exception as e:
+        logger.logger.error(e)
+        return build_error_response(500, "服务器内部错误")

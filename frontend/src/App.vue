@@ -11,7 +11,7 @@
           <span style="font-size: 14px; padding: 0 10px 0 0; color: #3f3f3f">{{UserInfo.userName}}</span>
           <el-dropdown>
             <el-row style="justify-content: center; align-items: center">
-              <el-avatar :src="UserInfo.avatar" />
+              <el-avatar :src="bigAvatarSrc[0]" />
             </el-row>
             <template #dropdown>
               <el-dropdown-menu style="width: fit-content">
@@ -202,7 +202,7 @@ import { login, register, updatePwd, getRegisterSessionKeyCheckCode, getChangePw
 import {getUserInfo, removeToken, removeUserInfo, setToken, setUserInfo} from "@/utils/auth.js";
 import { ArrowDown, User, Setting, SwitchButton } from '@element-plus/icons-vue'
 import {useRouter} from "vue-router";
-
+import {getImageBase64WithCache} from '@/utils/images'
 const router = useRouter()
 const showLoginDialog = ref(false);
 const loginDialogStatus = ref('login')
@@ -539,6 +539,15 @@ const onClickLogo = () => {
     location.reload()
   })
 }
+
+const bigAvatarSrc = ref(Array(5))
+
+const init_avatar = () => {
+  getImageBase64WithCache(bigAvatarSrc, 0, UserInfo.value.avatar);
+}
+
+onMounted(init_avatar)
+
 </script>
 
 <style scoped lang="scss">
