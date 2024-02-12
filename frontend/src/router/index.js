@@ -16,9 +16,9 @@ const routes = [
         component: () => import('@/views/Personal.vue')
     },
     {
-        path:'/WechatRecord',
-        name:'WechatRecord',
-        component:()=> import('@/views/WechatRecord.vue')
+        path:'/WechatMemory',
+        name:'WechatMemory',
+        component:()=> import('@/views/WechatMemory.vue')
     },
 ]
 

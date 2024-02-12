@@ -1,6 +1,6 @@
 <template>
 
-  <el-row style="width: 100%; height: 60px; box-shadow: 0px 2px 12px #9b9b9b; align-items: center;">
+  <el-row style="z-index:100; width: 100%; height: 60px; box-shadow: 0px 2px 12px #9b9b9b; align-items: center;">
     <!--  头部导航栏  -->
     <el-row style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 100%; flex-direction: row; flex-wrap: nowrap; margin: 0px 20px 0px 20px">
       <el-row style="display: flex; width: fit-content; height: 100%; align-items: center" @click="onClickLogo">
@@ -8,7 +8,7 @@
       </el-row>
       <el-row style="display: flex; width: fit-content; height: 100%; align-items: center">
         <el-row v-if="UserInfo != null && UserInfo != undefined && UserInfo.avatar != null && UserInfo.avatar != undefined && UserInfo.avatar.length > 0" style="justify-content: center; align-items: center">
-          <span style="font-size: 14px; padding: 0 10px 0 0; color: #3f3f3f">{{UserInfo.userName}}</span>
+          <span style="font-size: 18px; padding: 0 10px 0 0; color: #37a6e7">{{UserInfo.userName}}</span>
           <el-dropdown>
             <el-row style="justify-content: center; align-items: center">
               <el-avatar :src="UserInfo.avatar[UserInfo.avatar.length - 1]" />
