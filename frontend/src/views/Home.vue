@@ -3,7 +3,7 @@
   <kinesis-container>
     <el-row style="width: 100%; height: 100%;display: flex; justify-content: center; align-items: center; flex-direction: column;overflow-y: auto">
       <el-row style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 78%; height: 90%">
-        <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center; width: 100%; height: 80%; flex-wrap: nowrap">
+        <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center; width: 100%; height: 80%;">
           <el-row style="height: 100%; width: 50%; display: flex; justify-content: center; align-items: center; flex-wrap: wrap">
             <el-row style="height: 100%; width: fit-content; display: flex; flex-direction: column; justify-content: center; flex-wrap: nowrap; align-items: start">
               <kinesis-element style="width: fit-content; height: fit-content; padding: 0 10px 0 10px"><span style="font-weight: bold; font-size: xxx-large; color: #081642">Pond Memory</span></kinesis-element>
@@ -15,7 +15,6 @@
             </el-row>
           </el-row>
           <el-row style="height: 100%; width: 50%; display: flex; justify-content: center; align-items: center">
-            <!--          <div id="homeChart"></div>-->
             <Echarts :option="option" height="100%" width="100%" />
           </el-row>
         </el-row>
