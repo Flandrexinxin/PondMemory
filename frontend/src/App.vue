@@ -1,6 +1,6 @@
 <template>
 
-  <el-row style="width: 100%; height: 60px; box-shadow: 0px 2px 12px #9b9b9b; align-items: center;">
+  <el-row style="z-index:100; width: 100%; height: 60px; box-shadow: 0px 2px 12px #9b9b9b; align-items: center;">
     <!--  头部导航栏  -->
     <el-row style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 100%; flex-direction: row; flex-wrap: nowrap; margin: 0px 20px 0px 20px">
       <el-row style="display: flex; width: fit-content; height: 100%; align-items: center" @click="onClickLogo">

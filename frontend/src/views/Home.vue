@@ -14,8 +14,8 @@
               </el-row>
             </el-row>
           </el-row>
-          <el-row style="height: 100%; width: 50%; display: flex; justify-content: center; align-items: center">
-            <Echarts :option="option" height="100%" width="100%" />
+          <el-row ID="control-bar" style="height: 100%; width: 50%; display: flex; justify-content: center; align-items: center">
+<!--            <Echarts :option="option" height="100%" width="100%" @click="onClickItem(option)" />-->
           </el-row>
         </el-row>
         <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center; width: 100%; height: 10%">
@@ -34,7 +34,8 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import Echarts  from '../components/ReEcharts.vue';
+import * as echarts from 'echarts';
+import { onMounted } from 'vue'
 
 
 const option = reactive({
@@ -61,7 +62,7 @@ const option = reactive({
       emphasis: {
         label: {
           show: true,
-          fontSize: 40,
+          fontSize: 35,
           fontWeight: 'bold'
         }
       },
@@ -69,16 +70,26 @@ const option = reactive({
         show: false
       },
       data: [
-        { value: 1048, name: '微信聊天' },
-        { value: 735, name: '照片墙' },
-        { value: 580, name: '情感分析' },
-        { value: 484, name: '词云图' },
-        { value: 300, name: '爱你~' }
+        { value: 1048, name: 'WechatMemory' },
+        { value: 735, name: 'PhotoWall' },
+        { value: 580, name: 'TravallingMap' },
+        { value: 484, name: 'Books&Movies' },
+        { value: 300, name: 'love u' }
       ]
     }
   ]
 });
 
+function init_func()
+{
+  var chartDom = document.getElementById('control-bar');
+  var myChart = echarts.init(chartDom);
+  myChart.on('click', function (params) {
+    console.log(params.name)
+    window.open('http://localhost:2000/'+encodeURIComponent(params.name));
+  });
+  option && myChart.setOption(option);
+}
 
 const onClickElLink = () => {
   // shell.openExternal("https://gitee.com/killuayz/pond-memory");
@@ -86,6 +97,9 @@ const onClickElLink = () => {
   // window.electron.ipcRenderer.send('openProjectWindow');
   window.open('https://gitee.com/killuayz/pond-memory');
 }
+
+onMounted(init_func);
+
 
 
 </script>
