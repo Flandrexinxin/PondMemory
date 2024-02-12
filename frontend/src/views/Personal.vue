@@ -1,7 +1,7 @@
 <template>
   <el-row style="flex-direction: column; justify-content: start; align-items: center;width: 100%; height: 100%; margin-top: 140px;">
     <el-row style="flex-direction: column; justify-content: center; align-items: center;width: 90%; height: fit-content; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); border-radius: 10px; padding: 0 20px 50px 20px ">
-      <el-avatar @click="onClickAvatar" :size="120" style="margin-top: -60px; box-shadow: 0 0px 5px 2px rgba(0, 0, 0, 0.19); margin-bottom: 30px; border-radius: 50%;" :src="UserInfo.avatar[0] "/>
+      <el-avatar @click="onClickAvatar" :size="120" style="margin-top: -60px; box-shadow: 0 0px 5px 2px rgba(0, 0, 0, 0.19); margin-bottom: 30px; border-radius: 50%;" :src="UserInfo.avatar"/>
       <el-row justify="center" align="middle">
         <span style="font-size: 35px; color: #313131; margin-bottom: 14px">{{UserInfo.userName}}</span>
 <!--        <el-button size="small" round @click="" style="padding: 0 5px 0 5px"><el-icon><Edit /></el-icon></el-button>-->
@@ -111,20 +111,52 @@
       </el-row>
     </template>
     <el-row justify="center" align="middle" style="height: 100%; width: 100%">
+
       <el-tabs v-model="tabActivateName" style="width: 100%">
-        <el-tab-pane label="插图" name="first">插图</el-tab-pane>
-        <el-tab-pane label="上传" name="second">上传</el-tab-pane>
+        <el-tab-pane label="插图" name="first">
+          <template v-for="(avatar, index) in avatarList.userHistoryFileList">
+<!--            <span>{{getImgSrcByFileObj(avatar)}}</span>-->
+            <el-image style="width: 100px; height:100px" @click="onClickAvatarUpdate(avatar)" :src="userHistoryAvatarImgSrc[index]" />
+          </template>
+
+          <el-divider />
+
+          <template v-for="(avatar, index)  in avatarList.systemAvatarList">
+            <el-image style="width: 100px; height:100px" @click="onClickAvatarUpdate(avatar)" :src="systemAvatarImgSrc[index]" />
+          </template>
+
+        </el-tab-pane>
+        <el-tab-pane label="上传" name="second">
+          <el-row style="justify-content: center; align-items: center; width: 100%; flex-direction: column">
+            <el-upload
+                class="avatar-uploader"
+                :auto-upload="false"
+                :on-change="handleUploadChanged"
+                ref="uploadFile"
+                :show-file-list="false"
+            >
+              <img v-if="uploadAvatarImageUrl" :src="uploadAvatarImageUrl" class="avatar" style="max-width: 300px; max-height: 300px; min-width: 178px; min-height: 178px;"/>
+              <el-icon v-else style="width: 178px; height: 178px; border: 1px solid; border-style: dashed; border-radius: 5px;margin-bottom: 10px" class="avatar-uploader-icon"><Plus /></el-icon>
+            </el-upload>
+            <el-row>
+              <el-button type="success" @click="onClickSubmitAvatarToServerBtn">确认</el-button>
+            </el-row>
+          </el-row>
+        </el-tab-pane>
       </el-tabs>
     </el-row>
   </el-dialog>
-
 </template>
 
 <script setup lang="ts">
 import {getUserInfo, setUserInfo} from "@/utils/auth.js";
-import {ref} from "vue";
-import { changeUserProfile, userProfile } from '@/api/user.js'
-import {ElMessage} from "element-plus";
+import {onMounted, ref} from "vue";
+import { changeUserProfile, userProfile, getAvatarListAPI, updateAvatarListAPI } from '@/api/user.js'
+import {ElMessage, genFileId, UploadFile, UploadInstance, UploadProps, UploadRawFile} from "element-plus";
+import {getFileObjByFileId, uploadFileAPI} from '@/api/file.js'
+import {getImgSrcByFileObj, getImages, getImageBase64WithCache} from '@/utils/images'
+import {Plus} from "@element-plus/icons-vue";
+import {Base64} from "js-base64";
 
 const tabActivateName = ref("first")
 const updateAvatarDialogShow = ref(false)
@@ -134,8 +166,13 @@ const form = ref({
   signature: '',
   sex: true
 })
+const imgSrc = ref('')
 
 const isUpdatingProfile = ref(false)
+
+
+const uploadAvatarImageUrl = ref()
+const uploadFile = ref()
 
 const onClickEditUserNameBtn = () => {
 
@@ -143,6 +180,61 @@ const onClickEditUserNameBtn = () => {
 
 const onClickEditSignatureBtn = () => {
 
+}
+
+
+
+const handleExceed: UploadProps['onExceed'] = (files) =>{
+  uploadFile.value!.clearFiles()
+  const file = files[0] as UploadRawFile;
+  file.uid = genFileId();
+  uploadFile.value!.handleStart(file);
+}
+
+const CurrentUploadAvatarFile = ref<UploadFile>()
+
+const handleUploadChanged = (currentUploadFile: UploadFile, currentUploadFiles: UploadFiles) => {
+  console.log("当前file")
+  console.log(currentUploadFile)
+  CurrentUploadAvatarFile.value = currentUploadFile;
+  //检查是不是excel文件
+  let fileName = currentUploadFile.name;
+  let fileType = fileName.slice(fileName.lastIndexOf(".")+1);
+  console.log("fileType = "+fileType)
+  if(fileType !== "png" && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "webp" && fileType !== "gif"){
+    uploadFile.value!.clearFiles()
+    ElMessage({
+      message:"文件格式错误，请上传图片",
+      type:"error"
+    })
+  }
+  uploadAvatarImageUrl.value = URL.createObjectURL(currentUploadFile.raw)
+}
+
+const onClickSubmitAvatarToServerBtn = () => {
+    let reader = new FileReader();
+    reader.readAsDataURL(CurrentUploadAvatarFile.value.raw);
+    let fileName = CurrentUploadAvatarFile.value.name;
+    let isPrivate = false;
+    reader.onload = (e) => {
+      let result = e.target.result as string;
+      let fileContent = result.slice(result.indexOf(','))
+      // let fileContent = Base64.encode(result);
+      uploadFileAPI(fileName, fileContent, 'avatar',false)
+          .then((res) => {
+            ElMessage({
+              type:"success",
+              message:res.msg
+            })
+            getAvatarList().then(() => {
+              tabActivateName.value = 'first'
+            })
+          })
+    }
+}
+
+const beforeAvatarUpload = (rawFile) => {
+  return true;
 }
 
 const resetForm = () => {
@@ -184,9 +276,47 @@ const getNewUserProfile = () => {
 }
 
 const onClickAvatar = () => {
-  updateAvatarDialogShow.value = true
+  getAvatarList().then(() => {
+    updateAvatarDialogShow.value = true
+  })
+
 }
 
+const avatarList = ref([])
+const userHistoryAvatarImgSrc = ref(Array(100))
+const systemAvatarImgSrc = ref(Array(100))
+const getAvatarList = () => {
+  return getAvatarListAPI()
+      .then((res) => {
+        avatarList.value = res.data
+        let tmp1 = []
+        let tmp2 = []
+
+        for(let i = 0;i < avatarList.value.userHistoryFileList.length; ++i){
+          getImageBase64WithCache(userHistoryAvatarImgSrc, i, avatarList.value.userHistoryFileList[i])
+        }
+
+        for(let i = 0;i < avatarList.value.systemAvatarList.length; ++i){
+          getImageBase64WithCache(systemAvatarImgSrc, i, avatarList.value.systemAvatarList[i])
+        }
+
+      })
+}
+
+
+const onClickAvatarUpdate = (fileId) => {
+  updateAvatarListAPI(fileId).then((res) => {
+    ElMessage({
+      type: "success",
+      message: res.msg
+    })
+  }).then(()=>{
+    updateAvatarDialogShow.value = false;
+    getNewUserProfile().then(() => {
+      location.reload();
+    })
+  })
+}
 </script>
 
 <style scoped>
@@ -200,17 +330,5 @@ const onClickAvatar = () => {
   height: 18px;
 }
 
-.top_avatar_editor_layer:hover{
-  background: rgb(0,0,0,0.9);
-  position: relative;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  z-index: 100;
-}
 
 </style>

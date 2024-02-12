@@ -7,11 +7,11 @@
         <h1 style="height: fit-content; width: fit-content; color: #66b4e0; font-family:'Super Funtime';letter-spacing: 3px;font-size: 40px ">PondMemory</h1>
       </el-row>
       <el-row style="display: flex; width: fit-content; height: 100%; align-items: center">
-        <el-row v-if="UserInfo != null && UserInfo != undefined && UserInfo.avatar != null && UserInfo.avatar != undefined && UserInfo.avatar.length > 0" style="justify-content: center; align-items: center">
+        <el-row v-if="UserInfo != null && UserInfo != undefined && UserInfo.avatar != null && UserInfo.avatar != undefined" style="justify-content: center; align-items: center">
           <span style="font-size: 14px; padding: 0 10px 0 0; color: #3f3f3f">{{UserInfo.userName}}</span>
           <el-dropdown>
             <el-row style="justify-content: center; align-items: center">
-              <el-avatar :src="UserInfo.avatar[UserInfo.avatar.length - 1]" />
+              <el-avatar :src="UserInfo.avatar" />
             </el-row>
             <template #dropdown>
               <el-dropdown-menu style="width: fit-content">
@@ -222,8 +222,9 @@ type UserInfoType = {
   userId: string,
   userName: string,
   email: string,
-  avatar: Array<string>
+  avatar: string
 }
+
 const UserInfo = ref<UserInfoType>(getUserInfo())
 const count = ref(1)
 const enterPressed = ref(false)

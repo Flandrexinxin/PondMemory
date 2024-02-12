@@ -14,6 +14,7 @@
     "axios": "^1.6.7",
     "echarts": "^5.4.3",
     "element-plus": "^2.5.5",
+    "js-base64": "^3.7.6",
     "mixin": "^0.2.0",
     "nprogress": "^0.2.0",
     "sass": "^1.70.0",

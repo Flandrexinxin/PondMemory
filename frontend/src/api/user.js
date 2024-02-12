@@ -113,3 +113,23 @@ export function changeUserProfile(data){
     })
 }
 
+export function getAvatarListAPI(){
+    const data = {}
+    return request({
+        url: 'user/avatar/list',
+        method: 'post',
+        data: data
+    })
+}
+
+export function updateAvatarListAPI(fileId){
+    const data = {
+        fileId
+    }
+    return request({
+        url: 'user/avatar/update',
+        method: 'post',
+        data: data
+    })
+}
+
